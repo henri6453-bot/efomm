@@ -1,4 +1,4 @@
-<!doctype html>
+g<!doctype html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
@@ -29,26 +29,26 @@ function videoPath(subject, module, title){return "videos/"+slug(subject)+"/"+sl
 function allLessons(){return Object.entries(catalog).flatMap(([s,mods])=>mods.flatMap(([m,ls])=>ls.map(t=>({s,m,t,id:s+"|"+m+"|"+t}))))}
 function save(){localStorage.setItem("efomm-progress",JSON.stringify(state)); renderTop()}
 function renderTop(){let a=allLessons(),d=a.filter(x=>state[x.id]).length;document.getElementById("progressTop").textContent=`${d}/${a.length} aulas concluídas`}
-function navRender(){nav.innerHTML=Object.keys(catalog).map(s=>`<button class="${currentSubject===s?"active":""}" onclick="showSubject(${JSON.stringify(s)})">${s}</button>`).join("")}
+function navRender(){nav.innerHTML=Object.keys(catalog).map(s=>`<button class="${currentSubject===s?"active":""}" onclick='showSubject(${JSON.stringify(s)})'>${s}</button>`).join("")}
 function home(){
 currentSubject=null;navRender();
 let a=allLessons(),d=a.filter(x=>state[x.id]).length;
-view.innerHTML=`<div class="hero"><h1>Olá, candidato.</h1><p>Continue sua preparação para a EFOMM. Escolha uma matéria para começar.</p><div class="bar"><div class="fill" style="width:${a.length?d/a.length*100:0}%"></div></div></div><div class="cards">${Object.entries(catalog).map(([s,mods])=>{let ls=mods.flatMap(x=>x[1]);let done=ls.filter(t=>state[s+"|"+mods.find(m=>m[1].includes(t))[0]+"|"+t]).length;return `<div class="card" onclick="showSubject(${JSON.stringify(s)})"><h3>${s}</h3><div class="small">${ls.length} aulas</div><div class="bar"><div class="fill" style="width:${ls.length?done/ls.length*100:0}%"></div></div></div>`}).join("")}</div>`;
+view.innerHTML=`<div class="hero"><h1>Olá, candidato.</h1><p>Continue sua preparação para a EFOMM. Escolha uma matéria para começar.</p><div class="bar"><div class="fill" style="width:${a.length?d/a.length*100:0}%"></div></div></div><div class="cards">${Object.entries(catalog).map(([s,mods])=>{let ls=mods.flatMap(x=>x[1]);let done=ls.filter(t=>state[s+"|"+mods.find(m=>m[1].includes(t))[0]+"|"+t]).length;return `<div class="card" onclick='showSubject(${JSON.stringify(s)})'><h3>${s}</h3><div class="small">${ls.length} aulas</div><div class="bar"><div class="fill" style="width:${ls.length?done/ls.length*100:0}%"></div></div></div>`}).join("")}</div>`;
 }
 function showSubject(s){
 currentSubject=s;navRender();
 view.innerHTML=`<div class="back" onclick="home()">← Início</div><h1>${s}</h1><p class="small">Aulas organizadas por assunto.</p>`+
-catalog[s].map(([m,ls],i)=>`<div class="module"><div class="moduleHead" onclick="toggle(${i})"><h3>${m}</h3><span>${ls.length} aulas ▾</span></div><div class="lessons" id="mod${i}">${ls.map(t=>{let id=s+"|"+m+"|"+t;return `<div class="lesson ${state[id]?"done":""}" onclick="openLesson(${JSON.stringify(s)},${JSON.stringify(m)},${JSON.stringify(t)})"><button class="play">▶</button><span class="title">${t}</span><span class="check">${state[id]?"✓":"○"}</span></div>`}).join("")}</div></div>`).join("");
+catalog[s].map(([m,ls],i)=>`<div class="module"><div class="moduleHead" onclick="toggle(${i})"><h3>${m}</h3><span>${ls.length} aulas ▾</span></div><div class="lessons" id="mod${i}">${ls.map(t=>{let id=s+"|"+m+"|"+t;return `<div class="lesson ${state[id]?"done":""}" onclick='openLesson(${JSON.stringify(s)},${JSON.stringify(m)},${JSON.stringify(t)})'><button class="play">▶</button><span class="title">${t}</span><span class="check">${state[id]?"✓":"○"}</span></div>`}).join("")}</div></div>`).join("");
 }
 function toggle(i){document.getElementById("mod"+i).classList.toggle("open")}
 function openLesson(s,m,t){
 let id=s+"|"+m+"|"+t, src=videoPath(s,m,t);
-view.innerHTML=`<div class="back" onclick="showSubject(${JSON.stringify(s)})">← Voltar para ${s}</div><div class="player"><video controls preload="metadata" src="${src}" onerror="this.dataset.err='1'"></video><div class="playerInfo"><h2>${t}</h2><div class="small">${s} · ${m}</div><div class="actions"><button class="btn primary" onclick="state[${JSON.stringify(id)}]=!state[${JSON.stringify(id)}];save();openLesson(${JSON.stringify(s)},${JSON.stringify(m)},${JSON.stringify(t)})">${state[id]?"✓ Concluída":"Marcar como concluída"}</button><button class="btn ghost" onclick="showSubject(${JSON.stringify(s)})">Lista de aulas</button></div></div></div><div class="empty" style="margin-top:16px">Se o vídeo não carregar, coloque o arquivo em <b>${src}</b> ou altere a URL da aula no catálogo.</div>`;
+view.innerHTML=`<div class="back" onclick='showSubject(${JSON.stringify(s)})'>← Voltar para ${s}</div><div class="player"><video controls preload="metadata" src="${src}" onerror="this.dataset.err='1'"></video><div class="playerInfo"><h2>${t}</h2><div class="small">${s} · ${m}</div><div class="actions"><button class="btn primary" onclick='state[${JSON.stringify(id)}]=!state[${JSON.stringify(id)}];save();openLesson(${JSON.stringify(s)},${JSON.stringify(m)},${JSON.stringify(t)})'>${state[id]?"✓ Concluída":"Marcar como concluída"}</button><button class="btn ghost" onclick='showSubject(${JSON.stringify(s)})'>Lista de aulas</button></div></div></div><div class="empty" style="margin-top:16px">Se o vídeo não carregar, coloque o arquivo em <b>${src}</b> ou altere a URL da aula no catálogo.</div>`;
 }
 search.addEventListener("input",e=>{
 let q=e.target.value.toLowerCase().trim(); if(!q){currentSubject?showSubject(currentSubject):home();return}
 let hits=allLessons().filter(x=>(x.s+" "+x.m+" "+x.t).toLowerCase().includes(q));
-view.innerHTML=`<div class="back" onclick="home()">← Início</div><h1>Resultados</h1>`+(hits.length?hits.map(x=>`<div class="lesson" onclick="openLesson(${JSON.stringify(x.s)},${JSON.stringify(x.m)},${JSON.stringify(x.t)})"><button class="play">▶</button><span><b>${x.t}</b><br><span class="small">${x.s} · ${x.m}</span></span></div>`).join(""):`<div class="empty">Nenhuma aula encontrada.</div>`);
+view.innerHTML=`<div class="back" onclick="home()">← Início</div><h1>Resultados</h1>`+(hits.length?hits.map(x=>`<div class="lesson" onclick='openLesson(${JSON.stringify(x.s)},${JSON.stringify(x.m)},${JSON.stringify(x.t)})'><button class="play">▶</button><span><b>${x.t}</b><br><span class="small">${x.s} · ${x.m}</span></span></div>`).join(""):`<div class="empty">Nenhuma aula encontrada.</div>`);
 });
 navRender();home();renderTop();
 </script></body></html>
